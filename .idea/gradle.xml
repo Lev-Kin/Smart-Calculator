@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="delegatedBuild" value="false" />
+        <option name="testRunner" value="GRADLE" />
+        <option name="distributionType" value="WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/Smart Calculator/task" />
+            <option value="$PROJECT_DIR$/Topics/Debugging techniques/Find the error" />
+            <option value="$PROJECT_DIR$/Topics/Debugging techniques/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/ArithmeticException" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/Extending type" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/Fix the code" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/Hierarchy overview" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/IndexOutOfBoundsException" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/NumberFormat" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/RuntimeException" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Hierarchy of exceptions/What is Throwable" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Initializing a list" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Initializing a mutable list of integers" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Initializing a mutable list of longs" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Printing the last element" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Right ways to create mutable lists" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Swap" />
+            <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Improve your vehicle" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Nested or inner" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/New Inner class" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Pumpkin and candle" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Why do we need inner classes" />
+            <option value="$PROJECT_DIR$/Topics/Object declarations/Board game basics  Game" />
+            <option value="$PROJECT_DIR$/Topics/Object declarations/Me" />
+            <option value="$PROJECT_DIR$/Topics/Object declarations/Theory" />
+            <option value="$PROJECT_DIR$/Topics/The try-catch-finally statement/Complex handling" />
+            <option value="$PROJECT_DIR$/Topics/The try-catch-finally statement/The Answer is" />
+            <option value="$PROJECT_DIR$/Topics/The try-catch-finally statement/The finally block" />
+            <option value="$PROJECT_DIR$/Topics/The try-catch-finally statement/Theory" />
+            <option value="$PROJECT_DIR$/Topics/The try-catch-finally statement/Using as expressions" />
+            <option value="$PROJECT_DIR$/util" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>

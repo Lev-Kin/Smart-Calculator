@@ -1,0 +1,12 @@
+type: code
+files:
+- name: src/Main.kt
+  visible: true
+  text: // write here
+  learner_created: false
+feedback_link: https://hyperskill.org/learn/step/20474#comment
+status: Solved
+feedback:
+  message: <html>Correct solution</html>
+  time: "Sat, 21 Jan 2023 07:31:58 UTC"
+record: -1
