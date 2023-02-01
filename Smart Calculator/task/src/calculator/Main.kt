@@ -1,6 +1,22 @@
 package calculator
 
 fun main() {
-    val (a, b) = readln().split(' ').map { it.toInt() }
-    println(a + b)
+    while (true) {
+        try {
+            val input = readln()
+            if (input.isEmpty()) continue
+
+            val sum = input
+                .split(' ')
+                .sumOf {
+                    it.toInt()
+                }
+
+            println(sum)
+
+        } catch (_: Exception) {
+            println("Bye!")
+            break
+        }
+    }
 }
