@@ -2,32 +2,44 @@ package calculator
 
 fun main() {
     while (true) {
-        val input = readln()
+        val line = readln()
 
-        if (input == "/exit") {
-            println("Bye!")
-            break
+        if (line.isEmpty()) continue
+        if (line == "/exit") break
+        if (line == "/help") {
+            println("The program calculates the sum of numbers")
+            continue
+        }
 
-        } else {
+        var sum = 0
+        var operation = "+"
 
-            if (input == "/help") {
-                println("The program calculates the sum of numbers")
+        val symbols = line.split(" ").toMutableList()
+        while (symbols.isNotEmpty()) {
+            var symbol = symbols.removeAt(0)
 
+            when {
+                symbol.matches(Regex("(--)*")) -> symbol = "+"
+                symbol.matches(Regex("-*")) -> symbol = "-"
+                symbol.matches(Regex("\\+*")) -> symbol = "+"
+            }
+
+            if (symbol in "+-") {
+                operation = symbol
             } else {
-
                 try {
-                    if (input.isEmpty()) continue
-                    val sum = input
-                        .split(' ')
-                        .sumOf {
-                            it.toInt()
-                        }
-                    println(sum)
-
-                } catch (_: Exception) {
-                    break
+                    when (operation) {
+                        "+" -> sum += symbol.toInt()
+                        "-" -> sum -= symbol.toInt()
+                    }
+                } catch (e: NumberFormatException) {
+                    println("$symbol is not a valid number!")
                 }
             }
         }
+
+        println(sum)
     }
+    println("Bye!")
 }
+
