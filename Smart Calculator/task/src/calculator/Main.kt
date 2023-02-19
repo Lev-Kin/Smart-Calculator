@@ -1,58 +1,123 @@
 package calculator
 
+import java.util.*
+
 fun main() {
-    while (true) {
-        val line = readln()
+    Calculator().go()
+}
 
-        if (line.isEmpty()) continue
-        if (line.startsWith("/")) {
-            when (line) {
-                "/exit" -> break
-                "/help" -> {
-                    println("The program is an awesome calculator!")
-                    continue
+class Calculator {
+    private val variables = emptyMap<String, Int>().toMutableMap()
+
+    fun go() {
+        while (true) {
+            val line = readLine()!!
+
+            if (line.isEmpty()) continue
+
+            if (line.startsWith("/")) {
+                when (line) {
+                    "/exit", "/x" -> break
+                    "/help", "/h" -> {
+                        println("The program is an awesome calculator!")
+                        continue
+                    }
+
+                    "/v" -> {
+                        println(variables)
+                        continue
+                    }
+
+                    else -> {
+                        println("Unknown command")
+                        continue
+                    }
                 }
+            } else {
+                processInput(line)
+            }
+        }
+        println("Bye!")
+    }
 
-                else -> {
-                    println("Unknown command")
-                    continue
+    private fun processInput(line: String) {
+        try {
+            if (line.contains("=")) {
+                assignVariable(line)
+            } else {
+                println(calculate(line))
+            }
+        } catch (e: UnknownVariableException) {
+            println(e.message)
+        }
+    }
+
+    private fun calculate(line: String): Int {
+        val operation = Stack<String>()
+        val stack = Stack<Int>()
+
+        val symbols = line.trim().split(" ").toMutableList()
+        while (symbols.isNotEmpty()) {
+            var symbol = symbols.removeAt(0)
+
+            symbol = cleanupRedundantSigns(symbol)
+
+            if (symbol in "+-*/") {
+                operation.push(symbol)
+            } else {
+                if (operation.isEmpty()) {
+                    stack.push(getValue(symbol))
+                } else {
+                    when (operation.pop()) {
+                        "+" -> stack.push(stack.pop() + getValue(symbol))
+                        "-" -> stack.push(stack.pop() - getValue(symbol))
+                        "*" -> stack.push(stack.pop() * getValue(symbol))
+                        "/" -> stack.push(stack.pop() / getValue(symbol))
+                        else -> throw UnknownOperatorException()
+                    }
                 }
             }
         }
-
-        val result = processInput(line)
-        println(result)
+        return stack.pop()
     }
-    println("Bye!")
-}
 
-private fun processInput(line: String): Int {
-    var result = 0
-    var operation = "+"
-    val symbol = line.split(" ").toMutableList()
-
-    while (symbol.isNotEmpty()) {
-
-        var symbol = symbol.removeAt(0)
-
-        when {
-            symbol.matches(Regex("(--)*")) -> symbol = "+"
-            symbol.matches(Regex("-*")) -> symbol = "-"
-            symbol.matches(Regex("\\+*")) -> symbol = "+"
-        }
-
-        if (symbol in "+-") {
-            operation = symbol
-        } else {
-            try {
-                when (operation) {
-                    "+" -> result += symbol.toInt()
-                    "-" -> result -= symbol.toInt()
-                }
-            } catch (e: NumberFormatException) {
-                println("Invalid expression")
-            }
+    private fun cleanupRedundantSigns(symbol: String): String {
+        return when {
+            symbol.matches(Regex("(--)*")) -> "+"
+            symbol.matches(Regex("-*")) -> "-"
+            symbol.matches(Regex("\\+*")) -> "+"
+            else -> symbol.trim()
         }
     }
-    return result
+
+    private fun assignVariable(line: String) {
+        val variable = line.substringBefore("=").trim()
+        if (!isValidVariableName(variable)) {
+            println("Invalid identifier")
+            return
+        }
+
+        val value = line.substringAfter("=").trim()
+        if (!isNumber(value) && !isValidVariableName(value)) {
+            println("Invalid identifier")
+            return
+        }
+
+        variables[variable] = getValue(value)
+    }
+
+    private fun isValidVariableName(name: String): Boolean {
+        return name.matches("[a-z]*".toRegex())
+    }
+
+    private fun isNumber(name: String): Boolean {
+        return name.toIntOrNull() != null
+    }
+
+    private fun getValue(token: String): Int {
+        return token.toIntOrNull() ?: variables[token] ?: throw UnknownVariableException()
+    }
 }
+
+class UnknownVariableException : Exception("Unknown variable")
+class UnknownOperatorException : Exception("Unknown operator")

@@ -62,6 +62,14 @@
             <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Right ways to create mutable lists" />
             <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Swap" />
             <option value="$PROJECT_DIR$/Topics/Introduction to MutableList/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Map/Creation of Map Entry" />
+            <option value="$PROJECT_DIR$/Topics/Map/Is there a key" />
+            <option value="$PROJECT_DIR$/Topics/Map/Map has elements" />
+            <option value="$PROJECT_DIR$/Topics/Map/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Mutable Map/About Mutable Map" />
+            <option value="$PROJECT_DIR$/Topics/Mutable Map/The output of two maps" />
+            <option value="$PROJECT_DIR$/Topics/Mutable Map/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Mutable Map/Wish list" />
             <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Improve your vehicle" />
             <option value="$PROJECT_DIR$/Topics/Nested and inner classes/Nested or inner" />
             <option value="$PROJECT_DIR$/Topics/Nested and inner classes/New Inner class" />
@@ -71,6 +79,12 @@
             <option value="$PROJECT_DIR$/Topics/Object declarations/Board game basics  Game" />
             <option value="$PROJECT_DIR$/Topics/Object declarations/Me" />
             <option value="$PROJECT_DIR$/Topics/Object declarations/Theory" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/A simple regex" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/Matching digits" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/OK Computer" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/The meaning of the {n} quantifier" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/The name of a variable" />
+            <option value="$PROJECT_DIR$/Topics/Quantifiers/Theory" />
             <option value="$PROJECT_DIR$/Topics/Ranges/At least one" />
             <option value="$PROJECT_DIR$/Topics/Ranges/Between two numbers" />
             <option value="$PROJECT_DIR$/Topics/Ranges/Check the value" />
