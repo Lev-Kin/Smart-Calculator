@@ -16,3 +16,5 @@ content:
 - Quantifiers
 - Map
 - Mutable Map
+- List
+- Mutable List

@@ -1,6 +1,8 @@
 package calculator
 
 import java.util.*
+import kotlin.collections.ArrayDeque
+import kotlin.math.pow
 
 fun main() {
     Calculator().go()
@@ -18,24 +20,14 @@ class Calculator {
             if (line.startsWith("/")) {
                 when (line) {
                     "/exit", "/x" -> break
-                    "/help", "/h" -> {
-                        println("The program is an awesome calculator!")
-                        continue
-                    }
-
-                    "/v" -> {
-                        println(variables)
-                        continue
-                    }
-
-                    else -> {
-                        println("Unknown command")
-                        continue
-                    }
+                    "/help", "/h" -> println("The program is an awesome calculator!")
+                    "/v" -> println(variables)
+                    else -> println("Unknown command")
                 }
-            } else {
-                processInput(line)
+                continue
             }
+
+            processInput(line)
         }
         println("Bye!")
     }
@@ -45,65 +37,138 @@ class Calculator {
             if (line.contains("=")) {
                 assignVariable(line)
             } else {
-                println(calculate(line))
+                val queue = convertToRPN(line)
+                val result = evaluateRPN(queue)
+                println(result)
             }
         } catch (e: UnknownVariableException) {
+            println(e.message)
+        } catch (e: InvalidExpressionException) {
+            println(e.message)
+        } catch (e: InvalidIdentifierException) {
             println(e.message)
         }
     }
 
-    private fun calculate(line: String): Int {
-        val operation = Stack<String>()
-        val stack = Stack<Int>()
+    private fun evaluateRPN(queue: ArrayDeque<Token>): Int {
+        val stack = Stack<Token>()
 
-        val symbols = line.trim().split(" ").toMutableList()
-        while (symbols.isNotEmpty()) {
-            var symbol = symbols.removeAt(0)
+        for (token in queue) {
+            if (token.isNumber()) {
+                stack.push(token)
+            } else if (token.isOperator()) {
+                val y = stack.pop().toInt()
+                val x = stack.pop().toInt()
 
-            symbol = cleanupRedundantSigns(symbol)
-
-            if (symbol in "+-*/") {
-                operation.push(symbol)
-            } else {
-                if (operation.isEmpty()) {
-                    stack.push(getValue(symbol))
-                } else {
-                    when (operation.pop()) {
-                        "+" -> stack.push(stack.pop() + getValue(symbol))
-                        "-" -> stack.push(stack.pop() - getValue(symbol))
-                        "*" -> stack.push(stack.pop() * getValue(symbol))
-                        "/" -> stack.push(stack.pop() / getValue(symbol))
-                        else -> throw UnknownOperatorException()
-                    }
+                val result = when (token.toString()) {
+                    "+" -> x + y
+                    "-" -> x - y
+                    "*" -> x * y
+                    "/" -> x / y
+                    "^" -> x.toDouble().pow(y).toInt()
+                    else -> IllegalArgumentException("Unknown operator: $token")
                 }
+
+                stack.push(Token(result.toString()))
             }
         }
-        return stack.pop()
+
+        assert(stack.size == 1) { "stack should only have one element at the end of RPN evaluation! but has: $stack" }
+
+        return stack.pop().toInt()
     }
 
-    private fun cleanupRedundantSigns(symbol: String): String {
-        return when {
-            symbol.matches(Regex("(--)*")) -> "+"
-            symbol.matches(Regex("-*")) -> "-"
-            symbol.matches(Regex("\\+*")) -> "+"
-            else -> symbol.trim()
-        }
+    private fun tokenize(line: String): MutableList<String> {
+        val regex = "(?<=op)|(?=op)".replace("op", "[-+*/()^]")
+
+        return cleanup(line)
+            .trim()
+            .split(regex.toRegex())
+            .filter { it.trim().isNotEmpty() }
+            .map { it.trim() }
+            .toMutableList()
     }
+
+    private fun convertToRPN(line: String): ArrayDeque<Token> {
+        val operatorStack = Stack<Token>()
+        val outputQueue = ArrayDeque<Token>()
+
+        val tokens = tokenize(line)
+
+        while (tokens.isNotEmpty()) {
+            val token = Token(tokens.removeAt(0))
+
+            if (token.isNumber()) {
+                outputQueue.add(token)
+            } else if (token.isOperator()) {
+                while (operatorStack.isNotEmpty() &&
+                    !operatorStack.peek().isLeftBracket() &&
+                    operatorStack.peek() >= token
+                ) {
+                    outputQueue.add(operatorStack.pop())
+                }
+                operatorStack.push(token)
+            } else if (token.isLeftBracket()) {
+                operatorStack.push(token)
+            } else if (token.isRightBracket()) {
+                try {
+                    while (!operatorStack.peek().isLeftBracket()) {
+                        outputQueue.add(operatorStack.pop())
+                    }
+                } catch (e: EmptyStackException) {
+                    throw InvalidExpressionException()
+                }
+                if (operatorStack.isNotEmpty() && operatorStack.peek().isLeftBracket()) {
+                    operatorStack.pop() // discard left bracket
+                }
+            } else {
+                val variable = variables[token.toString()] ?: throw UnknownVariableException()
+                outputQueue.add(Token(variable.toString()))
+            }
+        }
+
+        if (operatorStack.contains(Token("(")) ||
+            operatorStack.contains(Token(")"))
+        ) {
+            throw InvalidExpressionException()
+        }
+
+        while (operatorStack.isNotEmpty()) {
+            outputQueue.add(operatorStack.pop())
+        }
+
+        return outputQueue
+    }
+
+
+    private fun cleanup(line: String): String {
+        if (line.contains("**")) {
+            throw InvalidExpressionException()
+        }
+        if (line.contains("//")) {
+            throw InvalidExpressionException()
+        }
+
+        var cleanLine = line.replace("\\+{2,}".toRegex(), "+")
+        cleanLine = "-{2,}".toRegex().replace(cleanLine) { matchResult ->
+            if (matchResult.value.length % 2 == 0) "+" else "-"
+        }
+        return cleanLine
+    }
+
 
     private fun assignVariable(line: String) {
-        val variable = line.substringBefore("=").trim()
-        if (!isValidVariableName(variable)) {
-            println("Invalid identifier")
-            return
+        val variableName = line.substringBefore("=").trim()
+        if (!isValidVariableName(variableName)) {
+            throw InvalidIdentifierException()
         }
 
         val value = line.substringAfter("=").trim()
         if (!isNumber(value) && !isValidVariableName(value)) {
-            println("Invalid identifier")
-            return
+            throw InvalidIdentifierException()
         }
 
-        variables[variable] = getValue(value)
+        variables[variableName] = value.toIntOrNull() ?: variables[value] ?: throw UnknownVariableException()
     }
 
     private fun isValidVariableName(name: String): Boolean {
@@ -113,11 +178,45 @@ class Calculator {
     private fun isNumber(name: String): Boolean {
         return name.toIntOrNull() != null
     }
-
-    private fun getValue(token: String): Int {
-        return token.toIntOrNull() ?: variables[token] ?: throw UnknownVariableException()
-    }
 }
 
 class UnknownVariableException : Exception("Unknown variable")
-class UnknownOperatorException : Exception("Unknown operator")
+class InvalidExpressionException : Exception("Invalid expression")
+class InvalidIdentifierException : Exception("Invalid identifier")
+
+data class Token(private val token: String) {
+    fun isNumber(): Boolean {
+        return token.toIntOrNull() != null
+    }
+
+    fun isOperator(): Boolean {
+        return token in "+-*/^"
+    }
+
+    fun isLeftBracket(): Boolean {
+        return token == "("
+    }
+
+    fun isRightBracket(): Boolean {
+        return token == ")"
+    }
+
+    fun toInt(): Int {
+        return token.toInt()
+    }
+
+    // used for operator precedence
+    operator fun compareTo(other: Token): Int {
+        if (token == "^" && other.token != "^") return 1
+        if (token != "^" && other.token == "^") return -1
+
+        if (token in "+-" && other.token in "*/") return -1
+        if (token in "*/" && other.token in "+-") return +1
+
+        return 0
+    }
+
+    override fun toString(): String {
+        return token
+    }
+}
