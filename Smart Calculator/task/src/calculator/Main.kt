@@ -1,15 +1,15 @@
 package calculator
 
+import java.math.BigInteger
 import java.util.*
 import kotlin.collections.ArrayDeque
-import kotlin.math.pow
 
 fun main() {
     Calculator().go()
 }
 
 class Calculator {
-    private val variables = emptyMap<String, Int>().toMutableMap()
+    private val variables = emptyMap<String, BigInteger>().toMutableMap()
 
     fun go() {
         while (true) {
@@ -50,22 +50,22 @@ class Calculator {
         }
     }
 
-    private fun evaluateRPN(queue: ArrayDeque<Token>): Int {
+    private fun evaluateRPN(queue: ArrayDeque<Token>): BigInteger {
         val stack = Stack<Token>()
 
         for (token in queue) {
             if (token.isNumber()) {
                 stack.push(token)
             } else if (token.isOperator()) {
-                val y = stack.pop().toInt()
-                val x = stack.pop().toInt()
+                val y = stack.pop().toBigInteger()
+                val x = stack.pop().toBigInteger()
 
                 val result = when (token.toString()) {
                     "+" -> x + y
                     "-" -> x - y
                     "*" -> x * y
                     "/" -> x / y
-                    "^" -> x.toDouble().pow(y).toInt()
+                    "^" -> x.pow(y.toInt()).toBigDecimal().toBigInteger()
                     else -> IllegalArgumentException("Unknown operator: $token")
                 }
 
@@ -75,7 +75,7 @@ class Calculator {
 
         assert(stack.size == 1) { "stack should only have one element at the end of RPN evaluation! but has: $stack" }
 
-        return stack.pop().toInt()
+        return stack.pop().toBigInteger()
     }
 
     private fun tokenize(line: String): MutableList<String> {
@@ -140,7 +140,6 @@ class Calculator {
         return outputQueue
     }
 
-
     private fun cleanup(line: String): String {
         if (line.contains("**")) {
             throw InvalidExpressionException()
@@ -168,7 +167,7 @@ class Calculator {
             throw InvalidIdentifierException()
         }
 
-        variables[variableName] = value.toIntOrNull() ?: variables[value] ?: throw UnknownVariableException()
+        variables[variableName] = value.toBigIntegerOrNull() ?: variables[value] ?: throw UnknownVariableException()
     }
 
     private fun isValidVariableName(name: String): Boolean {
@@ -176,7 +175,7 @@ class Calculator {
     }
 
     private fun isNumber(name: String): Boolean {
-        return name.toIntOrNull() != null
+        return name.toBigIntegerOrNull() != null
     }
 }
 
@@ -186,7 +185,7 @@ class InvalidIdentifierException : Exception("Invalid identifier")
 
 data class Token(private val token: String) {
     fun isNumber(): Boolean {
-        return token.toIntOrNull() != null
+        return token.toBigIntegerOrNull() != null
     }
 
     fun isOperator(): Boolean {
@@ -201,8 +200,8 @@ data class Token(private val token: String) {
         return token == ")"
     }
 
-    fun toInt(): Int {
-        return token.toInt()
+    fun toBigInteger(): BigInteger {
+        return token.toBigInteger()
     }
 
     // used for operator precedence
@@ -220,3 +219,4 @@ data class Token(private val token: String) {
         return token
     }
 }
+
